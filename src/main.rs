@@ -6,7 +6,7 @@ use kube::{api::ListParams, Api, Client};
 async fn main() -> Result<()> {
     //создание клиента k8s
     let client = Client::try_default().await?;
-
+    println!("DEBUG comment");
     //создание интерфейса для работы с подами в неймпесей mobile-apps
     let pods: Api<Pod> = Api::namespaced(client, "mobile-apps");
 
