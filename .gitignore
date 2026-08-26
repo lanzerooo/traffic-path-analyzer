@@ -1,2 +1,10 @@
-/target
-.github/workflows/*.yml
+/target/
+Cargo.lock
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.github/workflows/**/*.yml
