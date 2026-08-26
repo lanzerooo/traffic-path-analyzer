@@ -1,0 +1,20 @@
+[package]
+name = "scripts"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+kube = { version = "4.0.0", features = ["runtime", "derive"] }
+k8s-openapi = { version = "0.28.0", features = ["latest", "schemars"] }
+schemars = { version = "1" }
+tokio = { version = "1.40", features = ["full"] }
+anyhow = "1.0"
+
+
+
+[profile.release]
+opt-level = "z"     # Оптимизировать размер
+lto = true          # удаляет неиспользуемый код из всех библиотек
+codegen-units = 1   # Собирает всё в один поток для лучшей оптимизации
+panic = "abort"     # Убирает код для раскрутки стека при паниках
+strip = true        # Автоматически вырезает все debug-символы и имена функций
