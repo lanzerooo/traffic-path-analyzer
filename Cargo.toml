@@ -1,5 +1,5 @@
 [package]
-name = "k8s-doctor"
+name = "traffic-path-analyzer"
 version = "0.1.0"
 edition = "2024"
 
