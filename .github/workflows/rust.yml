@@ -25,5 +25,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: k8s-doctor-linux
+          name: traffic-path-analyzer
           path: target/x86_64-unknown-linux-musl/release/k8s-doctor
