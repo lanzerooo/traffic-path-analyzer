@@ -6,18 +6,14 @@ use anyhow::Result;
 #[tokio::main]
 async fn main() -> Result<()> {
     let snapshot = collector::collect().await?;
-    // for n in &snapshot.namespace.items {
-    //     println!(
-    //         "NAME: {}\t STATUS: {}\n",
-    //         collector_func::get_namespace_name(n),
-    //         collector_func::get_namespace_status(n).unwrap_or("unknown"),
-    //     );
-    // }
+    println!("=============");
+    println!("DEPLOYMENTS: ");
+    println!("=============");
     for d in &snapshot.deployment.items {
         println!(
             "NAME: {}\n NAMESPACE: {}\n REPLICAS: {}\n AVAILABLE REPLICAS: {}\n READY REPLICAS: {}\n SELECTOR: {}",
             collector_func::get_deployment_name(d),
-            collector_func::get_deployment_namesapce(d),
+            collector_func::get_deployment_namespace(d),
             collector_func::get_deployment_replicas(d).unwrap_or(0),
             collector_func::get_deployment_available_replicas(d).unwrap_or(0),
             collector_func::get_deployment_ready_replicas(d).unwrap_or(0),
@@ -30,8 +26,14 @@ async fn main() -> Result<()> {
                 .unwrap_or_else(|| "none".to_string())
         )
     }
-    println!("===============================");
+    println!("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    println!("=============");
+    println!("REPLICASETS: ");
+    println!("=============");
 
+    println!("=============");
+    println!("PODS: ");
+    println!("=============");
     for p in &snapshot.pod.items {
         println!(
             "NAME: {}\n NAMESPACE: {}\n PHASE: {}\n RESTARTS: {}\n POD OWNER: {}\n, IMAGE: {}\n",

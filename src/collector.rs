@@ -1,7 +1,7 @@
 use anyhow::{Ok, Result};
 use k8s_openapi::api::{
-    apps::v1::Deployment,
-    core::v1::{Namespace, Node, Pod},
+    apps::v1::{Deployment, ReplicaSet},
+    core::v1::Pod,
 };
 use kube::{
     Api,
@@ -12,18 +12,18 @@ use kube::{
 mod collector_func;
 
 pub struct ClusterSnapshot {
-    // pub namespace: ObjectList<Namespace>,
     pub deployment: ObjectList<Deployment>,
+    pub replicaset: ObjectList<ReplicaSet>,
     pub pod: ObjectList<Pod>,
 }
 
 pub async fn collect() -> Result<ClusterSnapshot> {
-    // let namespaces = collect_namespace().await?;
     let deployments = collect_deploy().await?;
+    let replicasets = collect_replicaset().await?;
     let pods = collect_pods().await?;
     let cs = ClusterSnapshot {
-        // namespace: namespaces,
         deployment: deployments,
+        replicaset: replicasets,
         pod: pods,
     };
     Ok(cs)
@@ -45,10 +45,10 @@ async fn collect_deploy() -> Result<ObjectList<Deployment>> {
     Ok(deployments_list)
 }
 
-async fn collect_namespace() -> Result<ObjectList<Namespace>> {
+async fn collect_replicaset() -> Result<ObjectList<ReplicaSet>> {
     let client = collector_func::get_client().await?;
-    let namespaces: Api<Namespace> = Api::all(client);
+    let replicasets: Api<ReplicaSet> = Api::all(client);
     let lp = ListParams::default();
-    let namespaces_list = namespaces.list(&lp).await?;
-    Ok(namespaces_list)
+    let replicasets_list = replicasets.list(&lp).await?;
+    Ok(replicasets_list)
 }

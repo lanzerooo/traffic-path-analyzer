@@ -1,5 +1,5 @@
 use anyhow::Result;
-use k8s_openapi::api::apps::v1::Deployment;
+use k8s_openapi::api::apps::v1::{Deployment, ReplicaSet};
 use k8s_openapi::api::core::v1::Pod;
 use kube::Client;
 use std::collections::BTreeMap;
@@ -52,37 +52,12 @@ pub fn get_pod_image(pod: &Pod) -> Vec<&str> {
         .collect()
 }
 
-/////////////////////NAMESPACE/////////////////////
-
-// pub fn get_namespace_name(namespace: &Namespace) -> &str {
-//     namespace.metadata.name.as_deref().unwrap_or("unknown")
-// }
-
-// pub fn get_namespace_status(namespace: &Namespace) -> Option<&str> {
-//     namespace
-//         .status
-//         .as_ref()
-//         .and_then(|status| status.phase.as_deref())
-// }
-
-// pub fn get_namespace_age(namespace: &Namespace) -> Option<Time> {
-//     // namespace.metadata.creation_timestamp.clone()
-// }
-
-// pub fn get_namespace_creation_time(namespace: &Namespace) -> Option<Timestamp> {
-//     namespace
-//         .metadata
-//         .creation_timestamp
-//         .as_ref()
-//         .map(|time| time.0)
-// }
-
 /////////////////////DEPLOYMENT/////////////////////
 pub fn get_deployment_name(deployment: &Deployment) -> &str {
     deployment.metadata.name.as_deref().unwrap_or("unknown")
 }
 
-pub fn get_deployment_namesapce(deployment: &Deployment) -> &str {
+pub fn get_deployment_namespace(deployment: &Deployment) -> &str {
     deployment
         .metadata
         .namespace
@@ -113,6 +88,23 @@ pub fn get_deployment_selector(deployment: &Deployment) -> Option<&BTreeMap<Stri
         .spec
         .as_ref()
         .and_then(|spec| spec.selector.match_labels.as_ref())
+}
+
+/////////////////////REPLICASETS/////////////////////
+pub fn get_replicaset_name(replicaset: &ReplicaSet) -> &str {
+    replicaset.metadata.name.as_deref().unwrap_or("unknown")
+}
+
+pub fn get_replicaset_namespace(replicaset: &ReplicaSet) -> &str {
+    replicaset
+        .metadata
+        .namespace
+        .as_deref()
+        .unwrap_or("unknown")
+}
+
+pub fn get_replicaset_desired_replicas (replicaset: &ReplicaSet) -> &str {
+    replicaset.metadata.annotations.as_ref().
 }
 
 /////////////////////CLIENT/////////////////////
