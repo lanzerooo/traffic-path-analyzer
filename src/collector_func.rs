@@ -103,8 +103,8 @@ pub fn get_replicaset_namespace(replicaset: &ReplicaSet) -> &str {
         .unwrap_or("unknown")
 }
 
-pub fn get_replicaset_desired_replicas (replicaset: &ReplicaSet) -> &str {
-    replicaset.metadata.annotations.as_ref().
+pub fn get_replicaset_desired_replicas(replicaset: &ReplicaSet) -> Option<i32> {
+    replicaset.spec.as_ref().and_then(|spec| spec.replicas)
 }
 
 /////////////////////CLIENT/////////////////////
