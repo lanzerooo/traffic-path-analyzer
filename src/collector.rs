@@ -1,7 +1,7 @@
 use anyhow::{Ok, Result};
 use k8s_openapi::api::{
     apps::v1::{Deployment, ReplicaSet},
-    core::v1::Pod,
+    core::v1::{Pod, Service},
 };
 use kube::{
     Api,
@@ -15,16 +15,19 @@ pub struct ClusterSnapshot {
     pub deployment: ObjectList<Deployment>,
     pub replicaset: ObjectList<ReplicaSet>,
     pub pod: ObjectList<Pod>,
+    pub service: ObjectList<Service>,
 }
 
 pub async fn collect() -> Result<ClusterSnapshot> {
     let deployments = collect_deploy().await?;
     let replicasets = collect_replicaset().await?;
     let pods = collect_pods().await?;
+    let services = collect_service().await?;
     let cs = ClusterSnapshot {
         deployment: deployments,
         replicaset: replicasets,
         pod: pods,
+        service: services,
     };
     Ok(cs)
 }
@@ -51,4 +54,12 @@ async fn collect_replicaset() -> Result<ObjectList<ReplicaSet>> {
     let lp = ListParams::default();
     let replicasets_list = replicasets.list(&lp).await?;
     Ok(replicasets_list)
+}
+
+async fn collect_service() -> Result<ObjectList<Service>> {
+    let client = collector_func::get_client().await?;
+    let services: Api<Service> = Api::all(client);
+    let lp = ListParams::default();
+    let services_list = services.list(&lp).await?;
+    Ok(services_list)
 }

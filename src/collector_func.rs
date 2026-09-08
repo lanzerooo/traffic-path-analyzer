@@ -1,6 +1,7 @@
 use anyhow::Result;
 use k8s_openapi::api::apps::v1::{Deployment, ReplicaSet};
-use k8s_openapi::api::core::v1::Pod;
+use k8s_openapi::api::core::v1::ServicePort;
+use k8s_openapi::api::core::v1::{Pod, Service};
 use kube::Client;
 use std::collections::BTreeMap;
 
@@ -105,6 +106,59 @@ pub fn get_replicaset_namespace(replicaset: &ReplicaSet) -> &str {
 
 pub fn get_replicaset_desired_replicas(replicaset: &ReplicaSet) -> Option<i32> {
     replicaset.spec.as_ref().and_then(|spec| spec.replicas)
+}
+
+pub fn get_replicaset_available_replicas(replicaset: &ReplicaSet) -> Option<i32> {
+    replicaset
+        .status
+        .as_ref()
+        .and_then(|status| status.available_replicas)
+}
+
+pub fn get_replicaset_ready_replicas(replicaset: &ReplicaSet) -> Option<i32> {
+    replicaset
+        .status
+        .as_ref()
+        .and_then(|status| status.ready_replicas)
+}
+
+pub fn get_replicaset_selector(replicaset: &ReplicaSet) -> Option<&BTreeMap<String, String>> {
+    replicaset
+        .spec
+        .as_ref()
+        .and_then(|spec| spec.selector.match_labels.as_ref())
+}
+
+/////////////////////SERVICES/////////////////////
+
+pub fn get_service_name(service: &Service) -> &str {
+    service.metadata.name.as_deref().unwrap_or("unknown")
+}
+
+pub fn get_service_namespace(service: &Service) -> &str {
+    service.metadata.namespace.as_deref().unwrap_or("unknown")
+}
+
+pub fn get_service_type(service: &Service) -> Option<&str> {
+    service.spec.as_ref().and_then(|spec| spec.type_.as_deref())
+}
+
+pub fn get_service_cluster_ip(service: &Service) -> Option<&str> {
+    service
+        .spec
+        .as_ref()
+        .and_then(|spec| spec.cluster_ip.as_deref())
+}
+
+pub fn get_service_ports(service: &Service) -> Option<&[ServicePort]> {
+    service.spec.as_ref().and_then(|spec| spec.ports.as_deref())
+}
+
+pub fn get_service_selector(service: &Service) -> Option<&BTreeMap<String, String>> {
+    service
+        .spec
+        .as_ref()
+        .and_then(|spec| spec.selector.as_ref())
 }
 
 /////////////////////CLIENT/////////////////////
