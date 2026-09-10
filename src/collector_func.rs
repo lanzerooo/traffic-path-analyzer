@@ -53,6 +53,10 @@ pub fn get_pod_image(pod: &Pod) -> Vec<&str> {
         .collect()
 }
 
+pub fn get_pod_labels(pod: &Pod) -> Option<&BTreeMap<String, String>> {
+    pod.metadata.labels.as_ref()
+}
+
 /////////////////////DEPLOYMENT/////////////////////
 pub fn get_deployment_name(deployment: &Deployment) -> &str {
     deployment.metadata.name.as_deref().unwrap_or("unknown")
@@ -66,7 +70,11 @@ pub fn get_deployment_namespace(deployment: &Deployment) -> &str {
         .unwrap_or("unknown")
 }
 
-pub fn get_deployment_replicas(deployment: &Deployment) -> Option<i32> {
+pub fn get_deployment_desired_replicas(deployment: &Deployment) -> Option<i32> {
+    deployment.spec.as_ref().and_then(|repl| repl.replicas)
+}
+
+pub fn get_deployment_current_replicas(deployment: &Deployment) -> Option<i32> {
     deployment.status.as_ref().and_then(|repl| repl.replicas)
 }
 
@@ -127,6 +135,18 @@ pub fn get_replicaset_selector(replicaset: &ReplicaSet) -> Option<&BTreeMap<Stri
         .spec
         .as_ref()
         .and_then(|spec| spec.selector.match_labels.as_ref())
+}
+
+pub fn get_replicaset_owner_references(replicaset: &ReplicaSet) -> Option<&str> {
+    replicaset
+        .metadata
+        .owner_references
+        .as_ref()
+        .and_then(|refs| {
+            refs.iter()
+                .find(|owner_ref| owner_ref.kind == "Deployment")
+                .map(|owner_ref| owner_ref.name.as_str())
+        })
 }
 
 /////////////////////SERVICES/////////////////////

@@ -1,4 +1,4 @@
-use anyhow::{Ok, Result};
+use anyhow::Result;
 use k8s_openapi::api::{
     apps::v1::{Deployment, ReplicaSet},
     core::v1::{Pod, Service},
@@ -8,8 +8,7 @@ use kube::{
     api::{ListParams, ObjectList},
 };
 
-#[path = "collector_func.rs"]
-mod collector_func;
+use crate::collector_func;
 
 pub struct ClusterSnapshot {
     pub deployment: ObjectList<Deployment>,
